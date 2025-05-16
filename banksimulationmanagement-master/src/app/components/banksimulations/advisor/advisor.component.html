@@ -1,0 +1,176 @@
+<div *ngIf="view==1" class="form-group">
+  <label class="custom-label form-label">Advisor
+    <span style="color: red;" [hidden]="disabled" *ngIf="iscompulsory==true">*</span>
+  </label>
+  <div class="row">
+    <div class="col-md-10">
+      <ng-select [(ngModel)]="advisorID" [disabled]="disabled" name="advisorID">
+        <ng-option *ngFor="let advisor of advisors" [value]="advisor.advisor_ID" [disabled]="disabled">
+          {{ advisor.advisor_NAME }} - {{ advisor.advisor_MOBNO }} - {{ advisor.advisor_ADDRESS }}
+        </ng-option>
+      </ng-select>
+    </div>
+    <div class="col-md-2">
+      <button type="button" class="btn btn-light ml-2" [hidden]="disabled" (click)="advisorGet()">
+        <i class="fa fa-refresh" aria-hidden="true"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="view==2" class="form-group">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="outer-div">
+        <div class="grid-wrapper">
+          <dx-data-grid #grid id="gridContainer" [dataSource]="advisorsAll" keyExpr="advisor_ID"
+            [showColumnLines]="true" [showRowLines]="true" [showBorders]="true" [rowAlternationEnabled]="true"
+            [allowColumnResizing]="true" [columnMinWidth]="30" [columnAutoWidth]="true" [remoteOperations]="true"
+            height="600" width="100%" (onToolbarPreparing)="onToolbarPreparing($event)">
+            <dxo-filter-row [visible]="true"></dxo-filter-row>
+            <dxo-header-filter [visible]="true"></dxo-header-filter>
+            <dxo-search-panel [visible]="true"></dxo-search-panel>
+            <dxo-group-panel [visible]="false"></dxo-group-panel>
+            <dxo-grouping #expand [autoExpandAll]="true"></dxo-grouping>
+            <dxo-scrolling mode="virtual"></dxo-scrolling>
+            <dxo-sorting mode="multiple"></dxo-sorting>
+            <dxo-selection mode="single"></dxo-selection>
+            <dxi-column [width]="75" [allowFiltering]="false" [allowSorting]="false" alignment="center"
+              cellTemplate="cellTemplate"> </dxi-column>
+
+            <dxi-column dataField="advisor_ID" caption="Advisor_ID" cssClass="myClass" alignment="center"></dxi-column>
+            <dxi-column dataField="advisor_NAME" caption="Advisor_name" cssClass="myClass"
+              alignment="center"></dxi-column>
+            <dxi-column dataField="advisor_MOBNO" caption="Advisor_mobno" cssClass="myClass" alignment="center">
+            </dxi-column>
+            <dxi-column dataField="advisor_ADDRESS" caption="Advisor_address" cssClass="myClass" alignment="center">
+            </dxi-column>
+            <dxi-column [width]="100" dataField="isactive" caption="Active" cssClass="myClass"
+              alignment="center"></dxi-column>
+
+            <div *dxTemplate="let data of 'cellTemplate'">
+              <a href="javascript:void" class="" (click)="update(data)">
+                <i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+            </div>
+          </dx-data-grid>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="view==3" class="form-group">
+  <form action="" class="form" (ngSubmit)="f.form.valid && advisorAdd(advisor)" #f="ngForm" novalidate>
+    <div class="modal-dialog modal-xl" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">
+            <i class="fa fa-plus" aria-hidden="true"></i> Add New Advisor
+          </h5>
+          <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+            <span aria-hidden="true"> ×</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="control-label"> Advisor_name </label>
+                <span style="color: red;" [hidden]="disabled"> *</span>
+                <input type="text" class="form-control" name="advisor_NAME" length="50"
+                  [(ngModel)]="advisor.advisor_NAME" required />
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="control-label"> Advisor_mobno </label>
+                <span style="color: red;" [hidden]="disabled"> *</span>
+                <input type="text" class="form-control" name="advisor_MOBNO" maxlength="50"
+                  [(ngModel)]="advisor.advisor_MOBNO" required />
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="control-label"> Advisor_address </label>
+                <input type="text" class="form-control" name="advisor_ADDRESS" length="500"
+                  [(ngModel)]="advisor.advisor_ADDRESS">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary" [disabled]="f.invalid">
+            <i class="fa fa-plus" aria-hidden="true"></i> Add
+          </button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<div *ngIf="view==4" class="form-group">
+  <form action="" class="form" (ngSubmit)="f.form.valid && advisorUpdate(advisor)" #f="ngForm" novalidate>
+    <div class="modal-dialog modal-xl" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">
+            <i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit Advisor
+          </h5>
+          <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+            <span aria-hidden="true"> ×</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="control-label">Advisor_name </label>
+                <span style="color: red;" [hidden]="disabled"> *</span>
+                <input type="text" class="form-control" name="advisor_NAME" maxlength="50"
+                  [(ngModel)]="advisor.advisor_NAME" required />
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="control-label"> Advisor_mobno </label>
+                <span style="color: red;" [hidden]="disabled"> *</span>
+                <input type="text" class="form-control" name="advisor_MOBNO" maxlength="50"
+                  [(ngModel)]="advisor.advisor_MOBNO" required />
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="control-label"> Advisor_address</label>
+                <input type="text" class="form-control" name="advisor_ADDRESS" maxlength="500"
+                  [(ngModel)]="advisor.advisor_ADDRESS">
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group">
+                <div class="checkbox">
+                  <label class="control-label">
+                    <input type="checkbox" [checked]="advisor.isactive" [(ngModel)]="advisor.isactive" name="isactive">
+                    Active
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary" [disabled]="f.invalid">
+            <i class="fa fa-plus" aria-hidden="true"></i> Updates
+          </button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
